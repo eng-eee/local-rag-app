@@ -1,0 +1,3 @@
+app/embeddings/__pycache__/*
+app/ingestion/__pycache__/*
+app/__pycache__/*
