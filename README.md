@@ -40,7 +40,7 @@ optimized local AI application
               └───────┬───────┘
                       │
         ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-   PostgreSQL     Embedding      llama.cpp
+        ▼             ▼             ▼   
+    PostgreSQL     Embedding      llama.cpp
     pgvector        model           LLM
 
