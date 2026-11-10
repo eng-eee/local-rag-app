@@ -1,3 +1,7 @@
-app/embeddings/__pycache__/*
-app/ingestion/__pycache__/*
-app/__pycache__/*
+__pycache__/
+*.pyc
+.index/
+.data/
+.venv/
+*.md
+*.pdf
