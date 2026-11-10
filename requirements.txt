@@ -1,5 +1,6 @@
 numpy>=1.26
 requests>=2.31
+pypdf>=4.0
 
 # Optional: only needed when EMBEDDING_BACKEND=sentence-transformers.
 # sentence-transformers>=3.0

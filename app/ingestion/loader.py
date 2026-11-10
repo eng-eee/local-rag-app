@@ -1,4 +1,5 @@
 import shutil
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -11,6 +12,43 @@ class Document:
     text: str
 
 
+def _read_pdf(file_path: Path) -> str:
+    try:
+        from pypdf import PdfReader
+    except ImportError as exc:
+        raise RuntimeError(
+            "PDF support requires pypdf. Install it with "
+            "'python -m pip install pypdf'."
+        ) from exc
+
+    try:
+        reader = PdfReader(str(file_path))
+
+        if reader.is_encrypted and not reader.decrypt(""):
+            raise ValueError("PDF is password-protected")
+
+        pages = []
+
+        for page in reader.pages:
+            text = (page.extract_text() or "").strip()
+
+            if text:
+                pages.append(text)
+
+        return "\n\n".join(pages)
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Could not read PDF: {exc}") from exc
+
+
+def _read_document_text(file_path: Path) -> str:
+    if file_path.suffix.lower() == ".pdf":
+        return _read_pdf(file_path)
+
+    return file_path.read_text(encoding="utf-8")
+
+
 def load_text_file(path: str) -> str:
     file_path = Path(path)
 
@@ -20,7 +58,7 @@ def load_text_file(path: str) -> str:
     if not file_path.is_file():
         raise ValueError(f"Path is not a file: {file_path}")
 
-    return file_path.read_text(encoding="utf-8")
+    return _read_document_text(file_path)
 
 
 def load_documents(directory: str | Path) -> list[Document]:
@@ -41,9 +79,17 @@ def load_documents(directory: str | Path) -> list[Document]:
         if file_path.suffix.lower() not in SUPPORTED_EXTENSIONS:
             continue
 
-        text = file_path.read_text(encoding="utf-8").strip()
+        try:
+            text = _read_document_text(file_path).strip()
+        except (OSError, RuntimeError, ValueError) as exc:
+            warnings.warn(f"Skipping {file_path.name}: {exc}")
+            continue
 
         if not text:
+            warnings.warn(
+                f"Skipping {file_path.name}: no extractable text "
+                "(scanned PDFs need OCR)."
+            )
             continue
 
         documents.append(

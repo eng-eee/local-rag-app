@@ -216,7 +216,7 @@ def print_session(session: Session) -> None:
 def print_chat_help() -> None:
     print(
         "Commands:\n"
-        "  /add <path>     copy a .txt/.md document into documents/ and reindex\n"
+        "  /add <path>     copy a .txt/.md/.pdf document into documents/ and reindex\n"
         "  /docs           list the documents currently loaded\n"
         "  /reindex        rebuild the document index\n"
         "  /session        show the current session\n"
@@ -284,7 +284,7 @@ def handle_chat_command(
             print_chat_help()
         elif command == "/add":
             if not arguments:
-                print("Usage: /add /path/to/document.md")
+                print("Usage: /add /path/to/document.md or /path/to/document.pdf")
             else:
                 index = add_document(arguments[0], embedder)
         elif command == "/docs":
@@ -399,7 +399,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         default=[],
         metavar="PATH",
-        help="Add a .txt/.md document before starting. Can be repeated.",
+        help="Add a .txt/.md/.pdf document before starting. Can be repeated.",
     )
     parser.add_argument(
         "--session",

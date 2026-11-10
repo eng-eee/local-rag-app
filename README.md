@@ -45,7 +45,7 @@ User question
 - Python 3.12+
 - [Ollama](https://ollama.com/) running locally
 - Ollama models: `qwen3:4b` and `nomic-embed-text`
-- Python packages: `numpy`, `requests`
+- Python packages: `numpy`, `requests`, `pypdf`
 
 ## Setup
 
@@ -99,16 +99,19 @@ with `--session geography`.
 ```bash
 # Copy a document into documents/ and rebuild the index.
 ./scripts/run.sh add "/path/to/notes.md"
+./scripts/run.sh add "/path/to/report.pdf"
 
 # Add one or more documents before starting chat or asking a question.
-./scripts/run.sh --document "/path/to/notes.md" --session my-study
-./scripts/run.sh ask "Summarize the notes" --document "/path/to/notes.md"
+./scripts/run.sh --document "/path/to/report.pdf" --session my-study
+./scripts/run.sh ask "Summarize the report" --document "/path/to/report.pdf"
 
 # Add a document from inside chat.
-/add /path/to/notes.md
+/add /path/to/report.pdf
 ```
 
-Supported formats: `.txt`, `.md`, `.markdown`.
+Supported formats: `.txt`, `.md`, `.markdown`, and text-based `.pdf`. PDF
+text is extracted with `pypdf`. Scanned/image-only PDFs need OCR first because
+they contain no extractable text.
 
 ### Sessions
 
@@ -140,7 +143,7 @@ the document index; sessions are kept.
 
 | Command | Description |
 | --- | --- |
-| `/add <path>` | Copy a `.txt`/`.md` document into `documents/` and reindex |
+| `/add <path>` | Copy a `.txt`/`.md`/`.pdf` document into `documents/` and reindex |
 | `/docs` | List loaded documents |
 | `/reindex` | Rebuild the document index |
 | `/session` | Show the current session id and name |
@@ -239,6 +242,11 @@ ollama pull nomic-embed-text
 
 The question may not be similar enough to any chunk. Lower `MIN_DOC_SCORE`,
 increase `TOP_K`, or run `/reindex` after adding documents.
+
+**A PDF is skipped or has no text**
+
+The PDF is probably scanned/image-only. Run OCR on it first, then add the
+resulting text or searchable PDF. Password-protected PDFs are skipped too.
 
 **I want a completely fresh start**
 

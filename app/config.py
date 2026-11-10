@@ -28,4 +28,4 @@ TOP_K = int(os.getenv("TOP_K", "3"))
 MIN_DOC_SCORE = float(os.getenv("MIN_DOC_SCORE", "0.5"))
 MEMORY_MESSAGES = int(os.getenv("MEMORY_MESSAGES", "3"))
 
-SUPPORTED_EXTENSIONS = {".txt", ".md", ".markdown"}
+SUPPORTED_EXTENSIONS = {".txt", ".md", ".markdown", ".pdf"}
